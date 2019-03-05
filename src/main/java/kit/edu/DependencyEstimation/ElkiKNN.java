@@ -33,7 +33,6 @@ import de.lmu.ifi.dbs.elki.index.tree.spatial.rstarvariants.strategies.bulk.Sort
 import de.lmu.ifi.dbs.elki.persistent.AbstractPageFileFactory;
 import de.lmu.ifi.dbs.elki.utilities.ELKIBuilder;
 import de.lmu.ifi.dbs.elki.database.ids.DBIDFactory;
-import de.lmu.ifi.dbs.elki.database.ids.*;
 
 import java.util.Arrays;
 

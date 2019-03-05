@@ -9,7 +9,6 @@ scalacOptions += "-feature"
 
 unmanagedJars in Compile += file("lib/uds.jar")
 
-
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 libraryDependencies += "de.lmu.ifi.dbs.elki" % "elki" % "0.7.5"
 libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
@@ -36,14 +35,6 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.2"
 
 //sbt-assembly
 
-//import AssemblyKeys._
-
-//assemblySettings
-
-//import com.github.retronym.SbtOneJar._
-//oneJarSettings
-
-
 assemblySettings
 
 import sbtassembly.Plugin.AssemblyKeys._
@@ -51,6 +42,11 @@ import sbtassembly.Plugin._
 
 jarName in assembly := s"${name.value}-${version.value}.jar"
 test in assembly := {}
+
+//mergeStrategy in assembly := {
+//  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+//  case x => MergeStrategy.first
+//}
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
