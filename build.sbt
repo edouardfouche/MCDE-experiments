@@ -10,7 +10,14 @@ scalacOptions += "-feature"
 unmanagedJars in Compile += file("lib/uds.jar")
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
-libraryDependencies += "de.lmu.ifi.dbs.elki" % "elki" % "0.7.5"
+libraryDependencies += "de.lmu.ifi.dbs.elki" % "elki" % "0.7.5" // Ans see the merging strategy
+
+// With those two it would compile, but then the assembly would complain that it
+// "Cannot find a usable implementation of interface de.lmu.ifi.dbs.elki.database.ids.DBIDFactory"
+// e.g., when calling II.
+//libraryDependencies += "de.lmu.ifi.dbs.elki" % "elki-index-rtree" % "0.7.5"
+//libraryDependencies += "de.lmu.ifi.dbs.elki" % "elki-core" % "0.7.5"
+
 libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
 libraryDependencies += "commons-io" % "commons-io" % "2.6"
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
@@ -43,11 +50,13 @@ import sbtassembly.Plugin._
 jarName in assembly := s"${name.value}-${version.value}.jar"
 test in assembly := {}
 
-//mergeStrategy in assembly := {
-//  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-//  case x => MergeStrategy.first
-//}
+mergeStrategy in assembly ~= { old =>
+{
+  case PathList("META-INF", "elki", xs @ _*) => MergeStrategy.first
+  case x => old(x)
+}
+}
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
-logLevel := Level.Debug
+//logLevel := Level.Debug
