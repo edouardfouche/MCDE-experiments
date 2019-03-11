@@ -7,4 +7,3 @@ script:
   - sbt build
   - sbt test
   - sbt assembly
-  

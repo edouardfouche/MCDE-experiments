@@ -1,6 +1,7 @@
 # MCDE - Experiments
 
 [![Build Status](https://travis-ci.com/edouardfouche/MCDE-experiments.svg?branch=master)](https://travis-ci.com/edouardfouche/MCDE-experiments)
+[![License AGPL-3.0](https://img.shields.io/badge/License-AGPL--3-brightgreen.svg)](https://github.com/edouardfouche/MCDE-experiments/blob/master/LICENSE.md)
 
 ![illustration](img/example4.png)
 
