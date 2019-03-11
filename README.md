@@ -1,5 +1,7 @@
 # MCDE - Experiments
 
+[![Build Status](https://travis-ci.com/edouardfouche/MCDE-experiments.svg?branch=master)](https://travis-ci.com/edouardfouche/MCDE-experiments)
+
 ![illustration](img/example4.png)
 
 Welcome to the supplementary material for the paper [*Monte Carlo Dependency Estimation*](https://arxiv.org/abs/1810.02112) (MCDE) by Edouard Fouché and Klemens Böhm, Karlsruhe Institute of Technology (KIT).
