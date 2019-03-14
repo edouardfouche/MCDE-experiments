@@ -24,6 +24,9 @@ libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
 libraryDependencies += "commons-io" % "commons-io" % "2.6"
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
+libraryDependencies += "org.jzy3d" % "jzy3d-api" % "1.0.0" //from "http://maven.jzy3d.org/releases/"
+resolvers += "Jzy3d Maven Release Repository" at "http://maven.jzy3d.org/releases"
+
 libraryDependencies ++= Seq(
   // Last stable release
   "org.scalanlp" %% "breeze" % "0.13.1",
@@ -38,6 +41,7 @@ libraryDependencies ++= Seq(
   // It depends on LGPL code
   // "org.scalanlp" %% "breeze-viz" % "0.13.1"
 )
+
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.2"
