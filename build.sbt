@@ -39,20 +39,20 @@ libraryDependencies ++= Seq(
   // "org.scalanlp" %% "breeze-viz" % "0.13.1"
 )
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.2"
 
 //sbt-assembly
 
-assemblySettings
+//assemblySettings
 
-import sbtassembly.Plugin.AssemblyKeys._
-import sbtassembly.Plugin._
+//import sbtassembly.Plugin.AssemblyKeys._
+//import sbtassembly.Plugin._
 
-jarName in assembly := s"${name.value}-${version.value}.jar"
+assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
 test in assembly := {}
 
-mainClass in assembly := Some("Main")
+//mainClass in assembly := Some("Main")
 //mainClass in assembly := Some("com.edouardfouche.Main")
 //packageOptions in assembly ~= { pos =>
 //  pos.filterNot { po =>
@@ -60,7 +60,7 @@ mainClass in assembly := Some("Main")
 //  }
 //}
 
-mergeStrategy in assembly ~= { old =>
+assemblyMergeStrategy in assembly ~= { old =>
 {
   case PathList("META-INF", "elki", xs @ _*) => MergeStrategy.first
   //case PathList("") => MergeStrategy.first
