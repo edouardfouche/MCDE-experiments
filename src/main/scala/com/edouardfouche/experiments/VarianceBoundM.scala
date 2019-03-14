@@ -17,7 +17,8 @@
 package com.edouardfouche.experiments
 
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators._
+//import com.edouardfouche.generators_deprecated._
+import io.github.edouardfouche.generators._
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.mcde.MWPr
 
@@ -29,7 +30,7 @@ import com.edouardfouche.stats.mcde.MWPr
   * Each sample have size 5000 with 3 dimensions.
   */
 object VarianceBoundM extends Experiment {
-  override val alpha_range = Vector()
+  override val alpha_range: Vector[Double] = Vector()
   override val M_range: Vector[Int] = (1 to 500).toVector
   override val nRep = 500 // number of repetition for each point
   override val data: Vector[DataRef] = Vector()
@@ -51,17 +52,17 @@ object VarianceBoundM extends Experiment {
     val test = MWPr(500)
     val stat = MWPr(1)
 
-    val linear0 = Linear(d, 0.0)
-    val linear1 = Linear(d, 0.1)
-    val linear2 = Linear(d, 0.2)
-    val linear3 = Linear(d, 0.3)
-    val linear4 = Linear(d, 0.4)
-    val linear5 = Linear(d, 0.5)
-    val linear6 = Linear(d, 0.6)
-    val linear7 = Linear(d, 0.7)
-    val linear8 = Linear(d, 0.8)
-    val linear9 = Linear(d, 0.9)
-    val linear10 = Linear(d, 1.0)
+    val linear0 = Linear(d, 0.0, "gaussian", 0)
+    val linear1 = Linear(d, 0.1, "gaussian", 0)
+    val linear2 = Linear(d, 0.2, "gaussian", 0)
+    val linear3 = Linear(d, 0.3, "gaussian", 0)
+    val linear4 = Linear(d, 0.4, "gaussian", 0)
+    val linear5 = Linear(d, 0.5, "gaussian", 0)
+    val linear6 = Linear(d, 0.6, "gaussian", 0)
+    val linear7 = Linear(d, 0.7, "gaussian", 0)
+    val linear8 = Linear(d, 0.8, "gaussian", 0)
+    val linear9 = Linear(d, 0.9, "gaussian", 0)
+    val linear10 = Linear(d, 1.0, "gaussian", 0)
 
     /*
     val cross0 = Cross(d, 0.0)
@@ -87,25 +88,25 @@ object VarianceBoundM extends Experiment {
     val zinv = Zinv(d, 0.2)
     */
 
-    val cross0 = Cross(d, 0.0)
-    val cross1 = Cross(d, 0.1)
-    val cross2 = Cross(d, 0.2)
+    val cross0 = Cross(d, 0.0, "gaussian", 0)
+    val cross1 = Cross(d, 0.1, "gaussian", 0)
+    val cross2 = Cross(d, 0.2, "gaussian", 0)
 
-    val sine0 = Sine(d, 1, 0.0)
-    val sine1 = Sine(d, 1, 0.1)
-    val sine2 = Sine(d, 1, 0.2)
+    val sine0 = Sine(d, 0.0, "gaussian", 0)(Some(1))
+    val sine1 = Sine(d, 0.1, "gaussian", 0)(Some(1))
+    val sine2 = Sine(d, 0.2, "gaussian", 0)(Some(1))
 
-    val sphere0 = HyperSphere(d, 0.0)
-    val sphere1 = HyperSphere(d, 0.1)
-    val sphere2 = HyperSphere(d, 0.2)
+    val sphere0 = HyperSphere(d, 0.0, "gaussian", 0)
+    val sphere1 = HyperSphere(d, 0.1, "gaussian", 0)
+    val sphere2 = HyperSphere(d, 0.2, "gaussian", 0)
 
-    val zinv0 = Zinv(d, 0.0)
-    val zinv1 = Zinv(d, 0.1)
-    val zinv2 = Zinv(d, 0.2)
+    val zinv0 = Zinv(d, 0.0, "gaussian", 0)
+    val zinv1 = Zinv(d, 0.1, "gaussian", 0)
+    val zinv2 = Zinv(d, 0.2, "gaussian", 0)
 
-    val independent = Independent(d, 0.0)
+    val independent = Independent(d, 0.0, "gaussian", 0)
 
-    val generators = Vector(linear0, linear1, linear2, linear3, linear4, linear5,
+    val generators: Vector[DataGenerator] = Vector(linear0, linear1, linear2, linear3, linear4, linear5,
                             linear6, linear7, linear8, linear9, linear10,
                             cross0, cross1, cross2,
                             sine0, sine1, sine2,
@@ -133,7 +134,8 @@ object VarianceBoundM extends Experiment {
     utils.createFolderIfNotExisting(experiment_folder + "/data")
 
     for{gendat <- generators_datasets} {
-      utils.saveDataSet(gendat._2, experiment_folder + "/data/" + s"${gendat._1.id}-${gendat._1.noise}-${gendat._1.nDim}")
+      val gen = gendat._1
+      utils.saveDataSet(gendat._2, experiment_folder + "/data/" + s"${gen.id}-${gen.noise}-${gen.nDim}")
     }
 
     for {

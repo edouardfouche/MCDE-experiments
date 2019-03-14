@@ -15,7 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.edouardfouche.generators.Independent
+//import com.edouardfouche.generators_deprecated.Independent
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.stats.mcde.MWP
 import org.scalatest.FunSuite
 
@@ -25,7 +26,7 @@ import org.scalatest.FunSuite
 class TestParallelContrast extends FunSuite with TestData {
 
   val test = MWP(50, parallelize = 0)
-  val data = test.preprocess(Independent(3, 0.0).generate(100000).transpose)
+  val data = test.preprocess(Independent(3, 0.0,"gaussian",0).generate(100000).transpose)
 
   test(s"Contrast with parallelism level = 0") {
     val test = MWP(50, parallelize = 0)

@@ -16,15 +16,16 @@
  */
 
 import com.edouardfouche.experiments.Data._
-import com.edouardfouche.generators.{Hourglass, Independent, Linear, Zinv}
+//import com.edouardfouche.generators_deprecated.{Hourglass, Independent, Linear, Zinv}
+import io.github.edouardfouche.generators.{Hourglass, Independent, Linear, Zinv}
 import com.edouardfouche.preprocess.Preprocess
 import com.edouardfouche.stats.mcde.{KS, MWP}
 import com.edouardfouche.stats.external.{HICS, II, MAC, UDS}
 
 
-val gen1 = Independent(2, 0).generate(10000)
-val gen2 = Linear(2, 0).generate(10000)
-Linear(2, 0).saveSample()
+val gen1 = Independent(2, 0, "gaussian", 0).generate(10000)
+val gen2 = Linear(2, 0, "gaussian", 0).generate(10000)
+Linear(2, 0, "gaussian", 0).save(1000)
 gen1.length
 gen1(0).length
 
@@ -62,18 +63,18 @@ II().contrast(linear_2D.open(), Set(0, 1))
 MAC().contrast(MAC().preprocess(independent_2D.open()), Set(0, 1))
 MAC().contrast(linear_2D.open(), Set(0, 1))
 
-val independent = Independent(3, 0.0).generate(1000)
-val linear = Linear(3, 1.0/30.0).generate(1000)
+val independent = Independent(3, 0.0, "gaussian", 0).generate(1000)
+val linear = Linear(3, 1.0/30.0, "gaussian", 0).generate(1000)
 UDS().contrast(UDS().preprocess(independent), Set(0, 1, 2))
 UDS().contrast(UDS().preprocess(linear), Set(0, 1, 2))
 MAC().contrast(MAC().preprocess(independent), Set(0, 1, 2))
 MAC().contrast(MAC().preprocess(linear), Set(0, 1, 2))
 
-val z = Zinv(3, 1.0).generate(1000)
+val z = Zinv(3, 1.0, "gaussian", 0).generate(1000)
 UDS().contrast(UDS().preprocess(z), Set(0, 1, 2))
 MAC().contrast(MAC().preprocess(z), Set(0, 1, 2))
 
-val hourglass = Hourglass(3, 0.73).generate(1000)
+val hourglass = Hourglass(3, 0.73, "gaussian", 0).generate(1000)
 UDS().contrast(UDS().preprocess(hourglass), Set(0, 1, 2))
 MAC().contrast(MAC().preprocess(hourglass), Set(0, 1, 2))
 

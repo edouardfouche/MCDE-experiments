@@ -18,7 +18,9 @@ package com.edouardfouche.experiments
 
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.DataGenerator
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.external._
 import com.edouardfouche.stats.mcde.{KS, MWP, MWPr, McdeStats}
@@ -30,16 +32,16 @@ import com.edouardfouche.utils.StopWatch
   * Compare the power w.r.t. different data size N
   */
 object PowerN extends Experiment {
-  val alpha_range = Vector()
+  val alpha_range: Vector[Double] = Vector()
   val M_range: Vector[Int] = Vector(50)
   val nRep = 500 // number of data sets we use to estimate rejection rate
   val data: Vector[DataRef] = Vector()
-  val N_range = Vector(100, 200, 500, 1000)
+  val N_range: Vector[Int] = Vector(100, 200, 500, 1000)
   //, 2000, 5000) // number of data points for each data set
   //val dims = Vector(2, 3, 5)
-  val dims = Vector(3)
+  val dims: Vector[Int] = Vector(3)
   val noiseLevels = 30
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.selected
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = selected_generators
 
   def run(): Unit = {
     info(s"Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -57,7 +59,7 @@ object PowerN extends Experiment {
       n <- N_range
       nDim <- dims
     } yield {
-      info(s"Starting com.edouardfouche.experiments with configuration N: ${n}, nDim: $nDim")
+      info(s"Starting com.edouardfouche.experiments with configuration N: $n, nDim: $nDim")
 
       //val ks = KS(m, 0.1)
       val mwp = MWP(m, 0.5)
@@ -81,7 +83,7 @@ object PowerN extends Experiment {
       info(s"Computing Null Distribution")
       for (test <- tests.par) {
         val preprocessing = (1 to nRep).par.map(x => {
-          val data = Independent(nDim, 0.0).generate(n)
+          val data = Independent(nDim, 0.0, "gaussian", 0).generate(n)
           StopWatch.measureTime(test.preprocess(data))
         }).toArray
 
@@ -92,7 +94,7 @@ object PowerN extends Experiment {
         // I think the collection of datasets is already parallel
         val values = preprocessed.map(x => {
           StopWatch.measureTime(test.contrast(x, x.indices.toSet))
-        }).toArray
+        })
 
         val CPUtime = values.map(_._1)
         val Walltime = values.map(_._2)

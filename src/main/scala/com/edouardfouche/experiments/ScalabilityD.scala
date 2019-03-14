@@ -16,7 +16,8 @@
  */
 package com.edouardfouche.experiments
 
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory}
+import io.github.edouardfouche.generators.{DataGenerator, Independent}
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory}
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.external._
 import com.edouardfouche.stats.mcde.{KS, MWP, MWPr}
@@ -26,12 +27,12 @@ import com.edouardfouche.stats.mcde.{KS, MWP, MWPr}
   * Test the scalability of each approach w.r.t. D, the number of dimensions
   */
 object ScalabilityD extends Experiment {
-  override val alpha_range = Vector()
+  override val alpha_range: Vector[Double] = Vector()
   override val M_range: Vector[Int] = Vector()
   override val nRep = 500 // number of data sets we generate to compute contrast
   override val data: Vector[DataRef] = Vector()
-  val D_range = Vector(2, 3, 5, 7, 10) // number of data points for each data set
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.independent
+  val D_range: Vector[Int] = Vector(2, 3, 5, 7, 10) // number of data points for each data set
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = Vector(Independent)
   val n = 1000
 
   def run(): Unit = {
@@ -50,7 +51,7 @@ object ScalabilityD extends Experiment {
     } {
       info(s"Status: d: $d")
       for {
-        r <- (1 to nRep)
+        r <- 1 to nRep
       } yield {
         //val ks = KS(50, 0.1)
         val mwp = MWP(50, 0.5)

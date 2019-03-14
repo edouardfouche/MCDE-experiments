@@ -1,10 +1,10 @@
 import com.edouardfouche.index._
-import com.edouardfouche.generators.Linear
-
+//import com.edouardfouche.generators_deprecated.Linear
+import io.github.edouardfouche.generators.Linear
 
 // CMI, HICS MAC and UDS use External Rank Index
 
-val data = Linear(2, 0).generate(100)
+val data = Linear(2, 0, "gaussian", 0).generate(100)
 val ind = new ExternalRankIndex(data)
 
 data(0)

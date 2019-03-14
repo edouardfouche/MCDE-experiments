@@ -1,19 +1,21 @@
-package com.edouardfouche.experiments
+package com.edouardfouche.experiments.bivariate
 
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.DataGenerator
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.mcde.McdeStats
 import com.edouardfouche.utils.StopWatch
 
 object BivariatePowerN extends BivariateExperiments {
-  val alpha_range = Vector()
+  val alpha_range: Vector[Double] = Vector()
   val nRep = 500 // number of data sets we use to estimate rejection rate
   val data: Vector[DataRef] = Vector()
-  val N_range = Vector(100, 200, 500, 1000)
+  val N_range: Vector[Int] = Vector(100, 200, 500, 1000)
   val noiseLevels = 30
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.selected
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = selected_generators
 
   def run(): Unit = {
     info(s"Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -30,7 +32,7 @@ object BivariatePowerN extends BivariateExperiments {
       n <- N_range
       nDim <- dims
     } yield {
-      info(s"Starting com.edouardfouche.experiments with configuration N: ${n}, nDim: $nDim")
+      info(s"Starting com.edouardfouche.experiments with configuration N: $n, nDim: $nDim")
 
 
       var ThresholdMap90 = scala.collection.mutable.Map[String, Double]()
@@ -42,7 +44,7 @@ object BivariatePowerN extends BivariateExperiments {
       info(s"Computing Null Distribution")
       for (test <- tests.par) {
         val preprocessing = (1 to nRep).par.map(x => {
-          val data = Independent(nDim, 0.0).generate(n)
+          val data = Independent(nDim, 0.0, "gaussian", 0).generate(n)
           StopWatch.measureTime(test.preprocess(data))
         }).toArray
 
@@ -53,7 +55,7 @@ object BivariatePowerN extends BivariateExperiments {
         // I think the collection of datasets is already parallel
         val values = preprocessed.map(x => {
           StopWatch.measureTime(test.contrast(x, x.indices.toSet))
-        }).toArray
+        })
 
         val CPUtime = values.map(_._1)
         val Walltime = values.map(_._2)

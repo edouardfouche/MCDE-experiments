@@ -2,7 +2,10 @@ package com.edouardfouche.experiments
 
 import java.io.{File, FileWriter}
 
-import com.edouardfouche.generators.DataGenerator
+import io.github.edouardfouche.generators.DataGenerator
+
+//import com.edouardfouche.generators_deprecated.DataGenerator
+import io.github.edouardfouche.generators._
 import com.edouardfouche.index.RankIndex
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats._
@@ -37,7 +40,7 @@ trait Experiment extends LazyLogging {
   val formatter = new java.text.SimpleDateFormat("yyy-MM-dd-HH-mm")
   val dirname: String = s"${formatter.format(java.util.Calendar.getInstance().getTime)}_${this.getClass.getSimpleName.init}_"
   val experiment_folder: String = master_experiment_folder concat "/" concat dirname
-  val summaryPath = experiment_folder + "/" + this.getClass.getSimpleName.init + ".csv"
+  val summaryPath: String = experiment_folder + "/" + this.getClass.getSimpleName.init + ".csv"
 
   MDC.remove("path")
   MDC.clear()
@@ -50,12 +53,68 @@ trait Experiment extends LazyLogging {
   info(s"${formatter.format(java.util.Calendar.getInstance().getTime)} - Starting the experiment ${this.getClass.getSimpleName.init}\n")
   utils.createFolderIfNotExisting(experiment_folder)
 
-  val defaulttests = Vector(MWB(defaultM, 0.5), MWZ(defaultM, 0.5), II())
+  val defaulttests: Vector[Stats] = Vector(MWB(defaultM, 0.5), MWZ(defaultM, 0.5), II())
+
+  val selected_generators: Vector[(Int, Double, String, Int) => DataGenerator] = Vector(
+    Cross,
+    DoubleLinear(_:Int,_:Double,_:String,_:Int)(Some(0.25)),
+    Hourglass,
+    Hypercube,
+    HypercubeGraph,
+    HyperSphere,
+    Linear,
+    Parabola(_:Int,_:Double,_:String,_:Int)(scale=Some(1)),
+    Sine(_:Int,_:Double,_:String,_:Int)(period = Some(1)),
+    Sine(_:Int,_:Double,_:String,_:Int)(period = Some(5)),
+    Star,
+    Zinv,
+    Independent
+  )
+
+  val all_generators: Vector[(Int, Double, String, Int) => DataGenerator] = Vector(
+    Cross,
+    DoubleLinear(_:Int,_:Double,_:String,_:Int)(coef=Some(0.25)),
+    DoubleLinear(_:Int,_:Double,_:String,_:Int)(coef=Some(0.5)),
+    DoubleLinear(_:Int,_:Double,_:String,_:Int)(coef=Some(0.75)),
+    Parabola(_:Int,_:Double,_:String,_:Int)(scale=Some(1)),
+    Parabola(_:Int,_:Double,_:String,_:Int)(scale=Some(2)),
+    Parabola(_:Int,_:Double,_:String,_:Int)(scale=Some(3)),
+    Hourglass, Hypercube, HypercubeGraph,
+    Independent,
+    Linear,
+    LinearPeriodic(_:Int,_:Double,_:String,_:Int)(period = Some(2)),
+    LinearPeriodic(_:Int,_:Double,_:String,_:Int)(period = Some(5)),
+    LinearPeriodic(_:Int,_:Double,_:String,_:Int)(period = Some(10)),
+    LinearPeriodic(_:Int,_:Double,_:String,_:Int)(period = Some(20)),
+    LinearStairs(_:Int,_:Double,_:String,_:Int)(Some(2)),
+    LinearStairs(_:Int,_:Double,_:String,_:Int)(Some(5)),
+    LinearStairs(_:Int,_:Double,_:String,_:Int)(Some(10)),
+    LinearStairs(_:Int,_:Double,_:String,_:Int)(Some(20)),
+    LinearSteps(_:Int,_:Double,_:String,_:Int)(Some(2)),
+    LinearSteps(_:Int,_:Double,_:String,_:Int)(Some(5)),
+    LinearSteps(_:Int,_:Double,_:String,_:Int)(Some(10)),
+    LinearSteps(_:Int,_:Double,_:String,_:Int)(Some(20)),
+    LinearThenDummy,
+    LinearThenNoise,
+    NonCoexistence,
+    Cubic(_:Int,_:Double,_:String,_:Int)(Some(1)),Cubic(_:Int,_:Double,_:String,_:Int)(Some(2)),Cubic(_:Int,_:Double,_:String,_:Int)(Some(3)),
+    RandomSteps(_:Int,_:Double,_:String,_:Int)(Some(2)), RandomSteps(_:Int,_:Double,_:String,_:Int)(Some(5)),
+    RandomSteps(_:Int,_:Double,_:String,_:Int)(Some(10)), RandomSteps(_:Int,_:Double,_:String,_:Int)(Some(20)),
+    Sine(_:Int,_:Double,_:String,_:Int)(Some(2)), Sine(_:Int,_:Double,_:String,_:Int)(Some(5)),
+    Sine(_:Int,_:Double,_:String,_:Int)(Some(10)), Sine(_:Int,_:Double,_:String,_:Int)(Some(20)),
+    HyperSphere,
+    Root(_:Int,_:Double,_:String,_:Int)(Some(1)), Root(_:Int,_:Double,_:String,_:Int)(Some(2)),
+    Root(_:Int,_:Double,_:String,_:Int)(Some(3)),
+    Star,
+    StraightLines,
+    Z,
+    Zinv
+  )
 
   def estimateEmpiricalBound(m: Int, n: Int, d: Int, nrep: Int, linear_preprocessed: RankIndex, independent_preprocessed: RankIndex): Unit = {
     val test = MWPr(m)
     info(s"--- Starting ${test.id}, M=${test.M}, Alpha=  ${test.alpha}, Beta = ${test.beta}, $n, $d, $nrep")
-    for(r <- (1 to nrep)) {
+    for(r <- 1 to nrep) {
       val linear_values = StopWatch.measureTime(test.contrast(linear_preprocessed, linear_preprocessed.indices.toSet))
       val independent_values = StopWatch.measureTime(test.contrast(independent_preprocessed, independent_preprocessed.indices.toSet))
 
@@ -107,7 +166,7 @@ trait Experiment extends LazyLogging {
     val test = MWPr(m)
     info(s"--- Starting ${test.id}, M=${test.M}, Alpha=${test.alpha}, Beta=${test.beta} ,$n, $d, $nrep")
     for(gendat <- generators_datasets) {
-      for(r <- (1 to nrep)) {
+      for(r <- 1 to nrep) {
         val values = StopWatch.measureTime(test.contrast(gendat._3, gendat._3.indices.toSet))
 
         val CPUtime = values._1
@@ -135,7 +194,7 @@ trait Experiment extends LazyLogging {
   }
 
 
-  def comparePower(generator: (Int) => (Double) => DataGenerator,
+  def comparePower(generator: (Int, Double, String, Int) => DataGenerator,
                    nDim: Int, n: Int, tests: Vector[Stats],
                    ThresholdMap90: scala.collection.mutable.Map[String, Double],
                    ThresholdMap95: scala.collection.mutable.Map[String, Double],
@@ -143,7 +202,7 @@ trait Experiment extends LazyLogging {
                    noiseLevels: Int): Unit = {
 
     for (noise <- (0 to noiseLevels).toArray.map(x => x.toDouble / noiseLevels.toDouble)) {
-      val gen = generator(nDim)(noise)
+      val gen = generator(nDim,noise,"gaussian",0)
 
       info(s"--- Computing ${gen.id}")
       val datasets = (0 until nRep).map(x => {
@@ -243,9 +302,9 @@ trait Experiment extends LazyLogging {
 
   def info(s: String): Unit = logger.info(s)
 
-  def compareScalability(generator: (Int) => (Double) => DataGenerator,
+  def compareScalability(generator: (Int, Double, String, Int) => DataGenerator,
                          nDim: Int, n: Int, tests: Vector[Stats], r: Int): Unit = {
-    val gen = generator(nDim)(0.0)
+    val gen = generator(nDim, 0.0, "gaussian", 0)
 
     val dataset = gen.generate(n)
 
@@ -319,9 +378,9 @@ trait Experiment extends LazyLogging {
     }
   }
 
-  def compareParallelScalability(generator: (Int) => (Double) => DataGenerator,
+  def compareParallelScalability(generator: (Int,Double,String,Int) => DataGenerator,
                                  nDim: Int, n: Int, par: Int, tests: Vector[McdeStats], r: Int): Unit = {
-    val gen = generator(nDim)(0.0)
+    val gen = generator(nDim,0.0,"gaussian",0)
 
     val dataset = gen.generate(n)
 
@@ -384,7 +443,7 @@ trait Experiment extends LazyLogging {
     }
   }
 
-  def comparePowerDiscrete(generator: (Int) => (Double) => DataGenerator,
+  def comparePowerDiscrete(generator: (Int,Double,String,Int) => DataGenerator,
                            nDim: Int, n: Int, disc: Int, tests: Vector[Stats],
                            ThresholdMap90: scala.collection.mutable.Map[String, Double],
                            ThresholdMap95: scala.collection.mutable.Map[String, Double],
@@ -392,10 +451,10 @@ trait Experiment extends LazyLogging {
                            noiseLevels: Int): Unit = {
 
     for (noise <- (0 to noiseLevels).toArray.map(x => x.toDouble / noiseLevels.toDouble)) {
-      val gen = generator(nDim)(noise)
+      val gen = generator(nDim,noise,"gaussian",disc)
 
       val datasets = (0 until nRep).map(x => {
-        gen.generate(n, disc)
+        gen.generate(n)
       })
 
       // Save data samples (debugging purpose)

@@ -1,20 +1,22 @@
-package com.edouardfouche.experiments
+package com.edouardfouche.experiments.bivariate
 
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.DataGenerator
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.utils.StopWatch
 
 object BivariatePowerDiscrete extends BivariateExperiments {
 
-  val alpha_range = Vector(0.5)
+  val alpha_range: Vector[Double] = Vector(0.5)
   val nRep = 500 // number of data sets we use to estimate rejection rate
   val data: Vector[DataRef] = Vector()
-  val N_range = Vector(1000) // number of data points for each data set
-  val discrete_range = Vector(100, 50, 10, 5, 3, 1) // 200, 20, 4, 2,
+  val N_range: Vector[Int] = Vector(1000) // number of data points for each data set
+  val discrete_range: Vector[Int] = Vector(100, 50, 10, 5, 3, 1) // 200, 20, 4, 2,
   val noiseLevels = 30
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.selected
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator]  = selected_generators
 
   def run(): Unit = {
     info(s"Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -34,7 +36,7 @@ object BivariatePowerDiscrete extends BivariateExperiments {
       nDim <- dims
       n <- N_range
     } yield {
-      info(s"Starting com.edouardfouche.experiments with configuration M: ${m}, nDim: disc: ${disc}, nDim: $nDim, n: $n")
+      info(s"Starting com.edouardfouche.experiments with configuration M: $m, nDim: disc: $disc, nDim: $nDim, n: $n")
 
       var ThresholdMap90 = scala.collection.mutable.Map[String, Double]()
       var ThresholdMap95 = scala.collection.mutable.Map[String, Double]()
@@ -46,7 +48,7 @@ object BivariatePowerDiscrete extends BivariateExperiments {
       for (test <- tests.par) {
         //info(s"Preparing data sets for Computing Null Distribution ($test)")
         val preprocessing = (1 to nRep).map(x => {
-          val data = Independent(nDim, 0.0).generate(n)//.transpose
+          val data = Independent(nDim, 0.0, "gaussian", 0).generate(n)//.transpose
           StopWatch.measureTime(test.preprocess(data))
         }).toArray
 
@@ -58,7 +60,7 @@ object BivariatePowerDiscrete extends BivariateExperiments {
         // I think the collection of datasets is already parallel
         val values = preprocessed.map(x => {
           StopWatch.measureTime(test.contrast(x, x.indices.toSet))
-        }).toArray
+        })
 
         val CPUtime = values.map(_._1)
         val Walltime = values.map(_._2)

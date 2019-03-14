@@ -17,7 +17,8 @@
 package com.edouardfouche.experiments
 
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators._
+//import com.edouardfouche.generators_deprecated._
+import io.github.edouardfouche.generators._
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.mcde.MWPr
 
@@ -29,12 +30,12 @@ import com.edouardfouche.stats.mcde.MWPr
   * Each sample have size 5000 with 3 dimensions.
   */
 object VarianceBoundM_ND extends Experiment {
-  override val alpha_range = Vector()
+  override val alpha_range: Vector[Double] = Vector()
   override val M_range: Vector[Int] = (1 to 500).toVector
   override val nRep = 500 // number of repetition for each point
   override val data: Vector[DataRef] = Vector()
-  val n_range = Vector(100, 200, 500, 1000, 2000, 5000, 10000)
-  val d_range = Vector(2,3,4,5)
+  val n_range: Vector[Int] = Vector(100, 200, 500, 1000, 2000, 5000, 10000)
+  val d_range: Vector[Int] = Vector(2,3,4,5)
   val noise=0.2
 
   def run(): Unit = {
@@ -56,8 +57,8 @@ object VarianceBoundM_ND extends Experiment {
       n <- n_range
     } {
       info(s"Starting for d: $d, n: $n")
-      val linear = Linear(d, 0.2)
-      val independent = Independent(d, 0.0)
+      val linear = Linear(d, 0.2, "gaussian", 0)
+      val independent = Independent(d, 0.0, "gaussian", 0)
 
       val generators = Vector(linear,
         independent)

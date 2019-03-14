@@ -1,6 +1,9 @@
 import java.io.File
 
-import com.edouardfouche.generators._
+import io.github.edouardfouche.generators._
+
+//import com.edouardfouche.generators_deprecated._
+import com.edouardfouche.experiments._
 import com.edouardfouche.stats.Stats
 import com.edouardfouche.stats.external._
 import com.edouardfouche.stats.mcde._
@@ -13,18 +16,52 @@ import com.edouardfouche.preprocess._
 val rows = 50
 val dims = 2
 
-val arr = Independent(dims, 0.0).generate(rows)
-val arr2 = Cross(dims, 0.0).generate(rows)
+val arr = Independent(dims, 0.0, "gaussian", 0).generate(rows)
+val arr2 = Cross(dims, 0.0, "gaussian", 0).generate(rows)
 arr.transpose
 
-val all_gens = List(Cross(dims, 0.0).generate(rows), Cubic(1,dims, 0.0).generate(rows), DoubleLinear(1,dims, 0.0).generate(rows),
-  Hourglass(dims, 0.0).generate(rows), Hypercube(dims, 0.0).generate(rows), HypercubeGraph(dims, 0.0).generate(rows),
-  HyperSphere(dims, 0.0).generate(rows), Independent(dims, 0.0).generate(rows), Linear(dims, 0.0).generate(rows), LinearPeriodic(1, dims, 0.0).generate(rows),
-  LinearStairs(4, dims, 0.0).generate(rows), LinearThenDummy(dims, 0.0).generate(rows), LinearThenNoise(dims, 0.0).generate(rows),
-  NonCoexistence(dims, 0.0).generate(rows), Parabolic(1, dims, 0.0).generate(rows), RandomSteps(4, dims, 0.0).generate(rows),
-  Sine(1, dims, 0.0).generate(rows), Sqrt(1, dims, 0.0).generate(rows), Star(dims, 0.0).generate(rows), StraightLines(dims, 0.0).generate(rows),
-  Z(dims, 0.0).generate(rows), Zinv(dims, 0.0).generate(rows))
+val all_generators = List(
+  Cross(dims,0.0,"gaussian",0),
+  DoubleLinear(dims,0.0,"gaussian",0)(coef=Some(0.25)),
+  DoubleLinear(dims,0.0,"gaussian",0)(coef=Some(0.5)),
+  DoubleLinear(dims,0.0,"gaussian",0)(coef=Some(0.75)),
+  Parabola(dims,0.0,"gaussian",0)(scale=Some(1)),
+  Parabola(dims,0.0,"gaussian",0)(scale=Some(2)),
+  Parabola(dims,0.0,"gaussian",0)(scale=Some(3)),
+  Hourglass(dims,0.0,"gaussian",0), Hypercube(dims,0.0,"gaussian",0), HypercubeGraph(dims,0.0,"gaussian",0),
+  Independent(dims,0.0,"gaussian",0),
+  Linear(dims,0.0,"gaussian",0),
+  LinearPeriodic(dims,0.0,"gaussian",0)(period = Some(2)),
+  LinearPeriodic(dims,0.0,"gaussian",0)(period = Some(5)),
+  LinearPeriodic(dims,0.0,"gaussian",0)(period = Some(10)),
+  LinearPeriodic(dims,0.0,"gaussian",0)(period = Some(20)),
+  LinearStairs(dims,0.0,"gaussian",0)(Some(2)),
+  LinearStairs(dims,0.0,"gaussian",0)(Some(5)),
+  LinearStairs(dims,0.0,"gaussian",0)(Some(10)),
+  LinearStairs(dims,0.0,"gaussian",0)(Some(20)),
+  LinearSteps(dims,0.0,"gaussian",0)(Some(2)),
+  LinearSteps(dims,0.0,"gaussian",0)(Some(5)),
+  LinearSteps(dims,0.0,"gaussian",0)(Some(10)),
+  LinearSteps(dims,0.0,"gaussian",0)(Some(20)),
+  LinearThenDummy(dims,0.0,"gaussian",0),
+  LinearThenNoise(dims,0.0,"gaussian",0),
+  NonCoexistence(dims,0.0,"gaussian",0),
+  Cubic(dims,0.0,"gaussian",0)(Some(2)),Cubic(dims,0.0,"gaussian",0)(Some(3)),
+  RandomSteps(dims,0.0,"gaussian",0)(Some(2)), RandomSteps(dims,0.0,"gaussian",0)(Some(5)),
+  RandomSteps(dims,0.0,"gaussian",0)(Some(10)), RandomSteps(dims,0.0,"gaussian",0)(Some(20)),
+  Sine(dims,0.0,"gaussian",0)(Some(2)), Sine(dims,0.0,"gaussian",0)(Some(5)),
+  Sine(dims,0.0,"gaussian",0)(Some(10)), Sine(dims,0.0,"gaussian",0)(Some(20)),
+  HyperSphere(dims,0.0,"gaussian",0),
+  Root(dims,0.0,"gaussian",0)(Some(1)), Root(dims,0.0,"gaussian",0)(Some(2)),
+  Root(dims,0.0,"gaussian",0)(Some(3)),
+  Star(dims,0.0,"gaussian",0),
+  StraightLines(dims,0.0,"gaussian",0),
+  Z(dims,0.0,"gaussian",0),
+  Zinv(dims,0.0,"gaussian",0)
+)
 
+
+val all_gens = all_generators.map(x => x.generate(rows))
 
 def get_dim[T](arr: Array[Array[T]]): (Int, Int) = {
   (arr.length, arr(0).length)
@@ -84,14 +121,14 @@ val exRank = new ExternalRankIndex(arr)
 val noIndex = new NonIndex(arr)
 get_dim(exRank.index)
 
-exRank(0).size
-noIndex(0).size
-noIndex(1).size
+exRank(0).length
+noIndex(0).length
+noIndex(1).length
 
 ////// Check for Saved Data
 
 // Check own generated file
-Independent(dims, 0.0).saveSample()
+Independent(dims,0.0,"gaussian",0).save(1000)
 val path = s"${System.getProperty("user.home")}/datagenerator/Independent-2-0.0.csv"
 val data = Preprocess.open(path, header = 1, separator = ",", excludeIndex = false, dropClass = true)
 get_dim(data) // row oriented as it should
@@ -139,7 +176,7 @@ val lst_of_f = getListOfFiles(getClass.getResource("/data/").getPath).map(x => x
 // --> Data is correct
 
 val indecies = List(new ExternalRankIndex(arr))
-get_dim(indecies(0).index)
+get_dim(indecies.head.index)
 which_row_orient_index(indecies)
 
 

@@ -16,22 +16,23 @@
  */
 package com.edouardfouche.experiments
 
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory}
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory}
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.mcde.{MWP, MWPr}
+import io.github.edouardfouche.generators.{DataGenerator, Independent}
 
 /**
   * Created by fouchee on 12.07.17.
   * Test the the influence of parallelization with increasing number of points N
   */
 object ParallelizationN extends Experiment {
-  override val alpha_range = Vector()
+  override val alpha_range: Vector[Double] = Vector()
   override val M_range: Vector[Int] = Vector(50)
   override val nRep = 1000 // number of data sets we generate to compute contrast
   override val data: Vector[DataRef] = Vector()
-  val N_range = Vector(500, 1000, 2000, 5000, 10000, 20000, 50000, 100000) // number of data points for each data set
-  val par_range = Vector(0, 1, 2, 4, 8, 16, 32)
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.independent
+  val N_range: Vector[Int] = Vector(500, 1000, 2000, 5000, 10000, 20000, 50000, 100000) // number of data points for each data set
+  val par_range: Vector[Int] = Vector(0, 1, 2, 4, 8, 16, 32)
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = Vector(Independent)
   val d = 3
 
   def run(): Unit = {
@@ -47,7 +48,7 @@ object ParallelizationN extends Experiment {
     for {
       n <- N_range
       par <- par_range
-      r <- (1 to nRep)
+      r <- 1 to nRep
     } yield {
       val mwp = MWP(200, 0.5, parallelize = par)
       val mwpr = MWPr(200, 0.5, parallelize = par)

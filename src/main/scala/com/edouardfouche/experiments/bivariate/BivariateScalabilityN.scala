@@ -1,17 +1,18 @@
-package com.edouardfouche.experiments
+package com.edouardfouche.experiments.bivariate
 
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory}
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory}
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.external._
 import com.edouardfouche.stats.mcde.{KS, MWP, MWPr}
+import io.github.edouardfouche.generators.{DataGenerator, Independent}
 
 object BivariateScalabilityN extends BivariateExperiments {
 
-  val alpha_range = Vector()
+  val alpha_range: Vector[Double] = Vector()
   val nRep = 500 // number of data sets we generate to compute contrast
   val data: Vector[DataRef] = Vector()
-  val N_range = Vector(10, 20, 50, 100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000) // number of data points for each data set
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.independent
+  val N_range: Vector[Int] = Vector(10, 20, 50, 100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000) // number of data points for each data set
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = Vector(Independent)
 
   def run(): Unit = {
     info(s"Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -29,7 +30,7 @@ object BivariateScalabilityN extends BivariateExperiments {
     } {
       info(s"Status: n: $n")
       for {
-        r <- (1 to nRep)
+        r <- 1 to nRep
       } yield {
 
         generators.par.foreach(x => compareScalability(x, dims(0), n, tests, r))

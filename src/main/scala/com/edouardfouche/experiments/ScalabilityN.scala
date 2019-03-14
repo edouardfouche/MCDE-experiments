@@ -16,10 +16,11 @@
  */
 package com.edouardfouche.experiments
 
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory}
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory}
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.external._
 import com.edouardfouche.stats.mcde.{KS, MWP, MWPr}
+import io.github.edouardfouche.generators.{DataGenerator, Independent}
 
 
 /**
@@ -27,13 +28,13 @@ import com.edouardfouche.stats.mcde.{KS, MWP, MWPr}
   * Test the scalability of each approach w.r.t. n, the number of ponit
   */
 object ScalabilityN extends Experiment {
-  val alpha_range = Vector()
+  val alpha_range: Vector[Double] = Vector()
   val M_range: Vector[Int] = Vector()
   val nRep = 500 // number of data sets we generate to compute contrast
   val data: Vector[DataRef] = Vector()
-  val N_range = Vector(10, 20, 50, 100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000) // number of data points for each data set
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.independent
-  val dims = Vector(3);
+  val N_range:Vector[Int] = Vector(10, 20, 50, 100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000) // number of data points for each data set
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator]  = Vector(Independent)
+  val dims: Vector[Int] = Vector(3)
 
   def run(): Unit = {
     info(s"Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -51,7 +52,7 @@ object ScalabilityN extends Experiment {
     } {
       info(s"Status: n: $n")
       for {
-        r <- (1 to nRep)
+        r <- 1 to nRep
       } yield {
         //val ks = KS(50, 0.1)
         val mwp = MWP(50, 0.5)

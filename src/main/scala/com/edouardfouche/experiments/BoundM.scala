@@ -16,7 +16,8 @@
  */
 package com.edouardfouche.experiments
 
-import com.edouardfouche.generators.{Independent, Linear}
+//import com.edouardfouche.generators_deprecated.{Independent, Linear}
+import io.github.edouardfouche.generators._
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.mcde.MWPr
 import com.edouardfouche.utils.StopWatch
@@ -29,7 +30,7 @@ import com.edouardfouche.utils.StopWatch
   * Each sample have size 1000 with 3 dimensions.
   */
 object BoundM extends Experiment {
-  override val alpha_range = Vector()
+  override val alpha_range: Vector[Double] = Vector()
   override val M_range: Vector[Int] = (1 to 500).toVector
   override val nRep = 500 // number of repetition for each point
   override val data: Vector[DataRef] = Vector()
@@ -49,8 +50,8 @@ object BoundM extends Experiment {
     info(s"Preprocessing ...")
 
 
-    val linear = Linear(d, noise)
-    val independent = Independent(d, 0.0)
+    val linear = Linear(d, noise, "gaussian", 0)
+    val independent = Independent(d, 0.0, "gaussian", 0)
 
     val linear_data = linear.generate(n)
     val independent_data =  independent.generate(n)

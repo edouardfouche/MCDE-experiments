@@ -15,7 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.edouardfouche.generators.Independent
+//import com.edouardfouche.generators_deprecated.Independent
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.stats.mcde.MWP
 import org.scalatest.FunSuite
 
@@ -24,7 +25,7 @@ import org.scalatest.FunSuite
   */
 class TestParallelMatrix extends FunSuite with TestData {
 
-  val data = MWP().preprocess(Independent(3, 0.0).generate(1000).transpose)
+  val data: MWP#PreprocessedData = MWP().preprocess(Independent(3, 0.0,"gaussian",0).generate(1000).transpose)
 
   test(s"CMatrix+MWP with parallelism level = 0") {
     val test = MWP(50, parallelize = 0)

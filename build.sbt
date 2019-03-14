@@ -11,6 +11,7 @@ unmanagedJars in Compile += file("lib/uds.jar")
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 libraryDependencies += "de.lmu.ifi.dbs.elki" % "elki" % "0.7.5" // Ans see the merging strategy
+libraryDependencies += "io.github.edouardfouche" %% "datagenerator" % "0.1.0"
 
 // With those two it would compile, but then the assembly would complain that it
 // "Cannot find a usable implementation of interface de.lmu.ifi.dbs.elki.database.ids.DBIDFactory"
@@ -50,9 +51,20 @@ import sbtassembly.Plugin._
 jarName in assembly := s"${name.value}-${version.value}.jar"
 test in assembly := {}
 
+mainClass in assembly := Some("Main")
+//mainClass in assembly := Some("com.edouardfouche.Main")
+//packageOptions in assembly ~= { pos =>
+//  pos.filterNot { po =>
+//    po.isInstanceOf[Package.MainClass]
+//  }
+//}
+
 mergeStrategy in assembly ~= { old =>
 {
   case PathList("META-INF", "elki", xs @ _*) => MergeStrategy.first
+  //case PathList("") => MergeStrategy.first
+  //case PathList("Main", xs @ _*) => MergeStrategy.first
+  case x if x.startsWith("Main") => MergeStrategy.first // otherwise collides with the main from datagenerator
   case x => old(x)
 }
 }

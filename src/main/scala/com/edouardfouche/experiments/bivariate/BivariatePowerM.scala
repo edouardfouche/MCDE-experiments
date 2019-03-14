@@ -1,23 +1,25 @@
-package com.edouardfouche.experiments
+package com.edouardfouche.experiments.bivariate
 
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.DataGenerator
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.mcde.{KS, MWP, MWPr, MWPu}
 import com.edouardfouche.stats.external.bivariate._
 import com.edouardfouche.utils.StopWatch
 
-object BivariatePowerM extends Experiment  {
-  val alpha_range = Vector()
+object BivariatePowerM extends BivariateExperiments  {
+  val alpha_range: Vector[Double] = Vector()
   val nRep = 500 // number of data sets we use to estimate rejection rate
   val data: Vector[DataRef] = Vector()
-  val N_range = Vector(1000) // number of data points for each data set
+  val N_range: Vector[Int] = Vector(1000) // number of data points for each data set
   val noiseLevels = 30
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.selected
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = selected_generators
 
-  val M_range: Vector[Int] = Vector(10, 50, 200, 500)
-  val dims = Vector(2)
+  override val M_range: Vector[Int] = Vector(10, 50, 200, 500)
+  override val dims: Vector[Int] = Vector(2)
 
   def run(): Unit = {
     info(s"Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -35,7 +37,7 @@ object BivariatePowerM extends Experiment  {
       nDim <- dims
       n <- N_range
     } yield {
-      info(s"Starting com.edouardfouche.experiments with configuration M: ${m}, nDim: $nDim, n: $n")
+      info(s"Starting com.edouardfouche.experiments with configuration M: $m, nDim: $nDim, n: $n")
 
       val tests = Vector(MWP(m, 0.5),  KS(m, 0.1), MWPr(m, 0.5), MWPu(m, 0.5), Correlation(), DistanceCorrelation(), HoeffdingsD(), HSM(), JSEquity(),
         MCE(), MutualInformation(), Slope(), SlopeInversion(), SpearmanCorrelation(), KendallsTau())
@@ -51,7 +53,7 @@ object BivariatePowerM extends Experiment  {
       for (test <- tests.par) {
         info(s"Preparing data sets for Computing Null Distribution")
         val preprocessing = (1 to nRep).par.map(x => {
-          val data = Independent(nDim, 0.0).generate(n)
+          val data = Independent(nDim, 0.0, "gaussian", 0).generate(n)
           StopWatch.measureTime(test.preprocess(data))
         }).toArray
 
@@ -63,7 +65,7 @@ object BivariatePowerM extends Experiment  {
         // I think the collection of datasets is already parallel
         val values = preprocessed.map(x => {
           StopWatch.measureTime(test.contrast(x, x.indices.toSet))
-        }).toArray
+        })
 
         val CPUtime = values.map(_._1)
         val Walltime = values.map(_._2)

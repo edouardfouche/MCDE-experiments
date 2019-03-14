@@ -18,7 +18,9 @@ package com.edouardfouche.experiments
 
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.DataGenerator
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.external._
 import com.edouardfouche.stats.mcde.McdeStats
@@ -28,17 +30,17 @@ import com.edouardfouche.utils.StopWatch
 
 /**
   * Created by fouchee on 12.07.17.
-  * Check the power of every approach using a selected number of bivariate generators against bivariate dependency measures
+  * Check the power of every approach using a selected number of bivariate generators_deprecated against bivariate dependency measures
   */
 object Power2D extends Experiment {
-  override val alpha_range = Vector()
+  override val alpha_range: Vector[Double] = Vector()
   override val M_range: Vector[Int] = Vector(50)
   override val nRep = 500 // number of data sets we use to estimate rejection rate
   override val data: Vector[DataRef] = Vector()
-  val N_range = Vector(1000) // number of data points for each data set
-  val dims = Vector(2)
+  val N_range: Vector[Int] = Vector(1000) // number of data points for each data set
+  val dims: Vector[Int] = Vector(2)
   val noiseLevels = 30
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.selected
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = selected_generators
 
   def run(): Unit = {
     info(s"${formatter.format(java.util.Calendar.getInstance().getTime)} - Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -56,7 +58,7 @@ object Power2D extends Experiment {
       nDim <- dims
       n <- N_range
     } yield {
-      info(s"Starting com.edouardfouche.experiments with configuration M: ${m}, nDim: $nDim, n: $n")
+      info(s"Starting com.edouardfouche.experiments with configuration M: $m, nDim: $nDim, n: $n")
 
       //val ks = KS(50, 0.1)
       val mwp = MWP(50, 0.5)
@@ -84,7 +86,7 @@ object Power2D extends Experiment {
       for (test <- tests.par) {
         info(s"Preparing data sets for Computing Null Distribution")
         val preprocessing = (1 to nRep).map(x => {
-          val data = Independent(nDim, 0).generate(n) // Careful here: not transpose
+          val data = Independent(nDim, 0, "gaussian", 0).generate(n) // Careful here: not transpose
           StopWatch.measureTime(test.preprocess(data))
         })
 
@@ -147,7 +149,7 @@ object Power2D extends Experiment {
         summary.write(summaryPath)
         info(s"test.id: ${test.id} -> ${mean(contrast)} - p90: ${ThresholdMap90(test.id)} - p95: ${ThresholdMap95(test.id)} - p99: ${ThresholdMap99(test.id)}")
       }
-      info(s"Done Computing Null Distribution: p95: ${ThresholdMap90}")
+      info(s"Done Computing Null Distribution: p95: $ThresholdMap90")
 
       generators.par.foreach(x => comparePower(x, nDim, n, tests, ThresholdMap90, ThresholdMap95, ThresholdMap99, noiseLevels))
     }

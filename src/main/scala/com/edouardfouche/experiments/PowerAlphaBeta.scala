@@ -18,7 +18,9 @@ package com.edouardfouche.experiments
 
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.DataGenerator
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.mcde.{KS, MWP, MWPr, MWPu, MWPs, MWPi}
 import com.edouardfouche.utils.StopWatch
@@ -36,7 +38,7 @@ trait PowerAlphaBeta extends Experiment {
   val N_range:Vector[Int] = Vector(1000) // number of data points for each data set
   val dims:Vector[Int] = Vector(2, 3, 5, 10)
   val noiseLevels = 30
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.all
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = all_generators
 
   def run(): Unit = {
     info(s"Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -58,7 +60,7 @@ trait PowerAlphaBeta extends Experiment {
       nDim <- dims
       n <- N_range
     } yield {
-      info(s"Starting com.edouardfouche.experiments with configuration M: ${m}, nDim: $nDim, a: ${a},b: ${b} , n: $n")
+      info(s"Starting com.edouardfouche.experiments with configuration M: $m, nDim: $nDim, a: $a,b: $b , n: $n")
 
       val ks = KS(m, a, b)
       val mwp = MWP(m, a, b)
@@ -79,7 +81,7 @@ trait PowerAlphaBeta extends Experiment {
       for (test <- tests) {
         info(s"Preparing data sets for Computing Null Distribution")
         val preprocessing = (1 to nRep).par.map(x => {
-          val data = Independent(nDim, 0.0).generate(n)
+          val data = Independent(nDim, 0.0, "gaussian", 0).generate(n)
           StopWatch.measureTime(test.preprocess(data))
         }).toArray
 
@@ -91,7 +93,7 @@ trait PowerAlphaBeta extends Experiment {
         // I think the collection of datasets is already parallel
         val values = preprocessed.map(x => {
           StopWatch.measureTime(test.contrast(x, x.indices.toSet))
-        }).toArray
+        })
 
         val CPUtime = values.map(_._1)
         val Walltime = values.map(_._2)

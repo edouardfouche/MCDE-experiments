@@ -1,8 +1,10 @@
-package com.edouardfouche.experiments
+package com.edouardfouche.experiments.bivariate
 
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
-import com.edouardfouche.generators.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.DataGenerator
+//import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
+import io.github.edouardfouche.generators.Independent
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.mcde.McdeStats
 import com.edouardfouche.utils.StopWatch
@@ -13,12 +15,12 @@ import com.edouardfouche.utils.StopWatch
   */
 
 object BivariatePower extends BivariateExperiments {
-  val alpha_range = Vector()
+  val alpha_range: Vector[Double] = Vector()
   val nRep = 500 // number of data sets we use to estimate rejection rate
   val data: Vector[DataRef] = Vector()
-  val N_range = Vector(1000) // number of data points for each data set
+  val N_range: Vector[Int] = Vector(1000) // number of data points for each data set
   val noiseLevels = 30
-  val generators: Vector[(Int) => (Double) => DataGenerator] = GeneratorFactory.selected
+  val generators: Vector[(Int, Double, String, Int) => DataGenerator] = selected_generators
 
   def run(): Unit = {
     info(s"${formatter.format(java.util.Calendar.getInstance().getTime)} - Starting com.edouardfouche.experiments - ${this.getClass.getSimpleName}")
@@ -35,7 +37,7 @@ object BivariatePower extends BivariateExperiments {
       nDim <- dims
       n <- N_range
     } yield {
-      info(s"Starting com.edouardfouche.experiments with configuration M: ${m}, nDim: $nDim, n: $n")
+      info(s"Starting com.edouardfouche.experiments with configuration M: $m, nDim: $nDim, n: $n")
 
 
       var ThresholdMap90 = scala.collection.mutable.Map[String, Double]()
@@ -49,7 +51,7 @@ object BivariatePower extends BivariateExperiments {
       for (test <- tests.par) {
         info(s"Preparing data sets for Computing Null Distribution")
         val preprocessing = (1 to nRep).map(x => {
-          val data = Independent(nDim, 0).generate(n) // Careful here: not transpose
+          val data = Independent(nDim, 0, "gaussian", 0).generate(n) // Careful here: not transpose
           StopWatch.measureTime(test.preprocess(data))
         })
 
@@ -112,7 +114,7 @@ object BivariatePower extends BivariateExperiments {
         summary.write(summaryPath)
         info(s"test.id: ${test.id} -> ${mean(contrast)} - p90: ${ThresholdMap90(test.id)} - p95: ${ThresholdMap95(test.id)} - p99: ${ThresholdMap99(test.id)}")
       }
-      info(s"Done Computing Null Distribution: p95: ${ThresholdMap90}")
+      info(s"Done Computing Null Distribution: p95: $ThresholdMap90")
 
       generators.par.foreach(x => comparePower(x, nDim, n, tests, ThresholdMap90, ThresholdMap95, ThresholdMap99, noiseLevels))
     }
