@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 import com.edouardfouche.experiments._
+import com.edouardfouche.experiments.bivariate._
 import com.edouardfouche.preprocess.Preprocess
 import com.edouardfouche.stats.StatsFactory
 import com.edouardfouche.utils.StopWatch

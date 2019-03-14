@@ -57,7 +57,7 @@ trait ExternalStats extends Stats with LazyLogging {
     } else {
       val colspar = (0 until numCols).par
       if (parallelize > 1) {
-        colspar.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(parallelize))
+        colspar.tasksupport = new ForkJoinTaskSupport(new java.util.concurrent.ForkJoinPool(parallelize))
       }
       colspar
     }

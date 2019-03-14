@@ -72,7 +72,7 @@ trait McdeStats extends Stats {
     } else {
       val iterations = (1 to M).par
       if (parallelize > 1) {
-        iterations.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(parallelize))
+        iterations.tasksupport = new ForkJoinTaskSupport(new java.util.concurrent.ForkJoinPool(parallelize))
       }
       iterations.map(i => {
         val referenceDim = dimensions.toVector(scala.util.Random.nextInt(dimensions.size))
@@ -108,7 +108,7 @@ trait McdeStats extends Stats {
     } else {
       val iterations = (1 to M).par
       if (parallelize > 1) {
-        iterations.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(parallelize))
+        iterations.tasksupport = new ForkJoinTaskSupport(new java.util.concurrent.ForkJoinPool(parallelize))
       }
       iterations.map(i => {
         val alpha = (scala.util.Random.nextInt(9)+1) / 10.0
@@ -205,7 +205,7 @@ trait McdeStats extends Stats {
     } else {
       val colspar = (0 until numCols).par
       if (parallelize > 1) {
-        colspar.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(parallelize))
+        colspar.tasksupport = new ForkJoinTaskSupport(new java.util.concurrent.ForkJoinPool(parallelize))
       }
       colspar
     }
@@ -265,7 +265,7 @@ trait McdeStats extends Stats {
     } else {
       val colspar = (0 until numCols).par
       if (parallelize > 1) {
-        colspar.tasksupport = new ForkJoinTaskSupport(new scala.concurrent.forkjoin.ForkJoinPool(parallelize))
+        colspar.tasksupport = new ForkJoinTaskSupport(new java.util.concurrent.ForkJoinPool(parallelize))
       }
       colspar
     }

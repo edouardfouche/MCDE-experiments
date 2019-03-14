@@ -3,9 +3,10 @@ name := "MCDE-experiments"
 organization:= "com.edouardfouche"
 
 version := "1.0"
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.8"
 fork in run := true
-scalacOptions += "-feature"
+//scalacOptions += "-feature"
+scalacOptions += "-deprecation"
 
 unmanagedJars in Compile += file("lib/uds.jar")
 
