@@ -2,6 +2,7 @@ package com.edouardfouche.experiments
 
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
+import com.edouardfouche.stats.mcde.McdeStats
 import io.github.edouardfouche.generators.DataGenerator
 //import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
 import io.github.edouardfouche.generators.Independent
@@ -87,9 +88,20 @@ object PowerBetaKS extends Experiment {
         summary.add("n", n)
         summary.add("nRep", nRep)
         summary.add("testId", test.id)
-        summary.add("alpha", test.alpha)
-        summary.add("beta", test.beta)
-        summary.add("M", test.M)
+
+        test match {
+          case x: McdeStats => {
+            summary.add("alpha", x.alpha)
+            summary.add("beta", x.beta)
+            summary.add("M", x.M)
+          }
+          case _ => {
+            summary.add("alpha", "NULL")
+            summary.add("beta", "NULL")
+            summary.add("M", "NULL")
+          }
+        }
+
         summary.add("powerAt90", contrast.count(_ > ThresholdMap90(test.id)).toDouble / nRep.toDouble)
         summary.add("powerAt95", contrast.count(_ > ThresholdMap95(test.id)).toDouble / nRep.toDouble)
         summary.add("powerAt99", contrast.count(_ > ThresholdMap99(test.id)).toDouble / nRep.toDouble)

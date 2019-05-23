@@ -133,10 +133,12 @@ object Power extends Experiment {
         test match {
           case x: McdeStats => {
             summary.add("alpha", x.alpha)
+            summary.add("beta", x.beta)
             summary.add("M", x.M)
           }
           case _ => {
             summary.add("alpha", "NULL")
+            summary.add("beta", "NULL")
             summary.add("M", "NULL")
           }
         }
