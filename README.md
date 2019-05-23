@@ -5,11 +5,14 @@
 
 ![illustration](img/example4.png)
 
-Welcome to the supplementary material for the paper [*Monte Carlo Dependency Estimation*](https://arxiv.org/abs/1810.02112) (MCDE)
-by Edouard Fouché and Klemens Böhm, Karlsruhe Institute of Technology (KIT). This repository contains the original
-implementation of MCDE/MWP and the information to reproduce the experiments in the paper. For this reason, it is
-partially frozen at the time of publication. To use the most recent and maintained implementation of MCDE/MWP, please
-visit this [repository](https://github.com/edouardfouche/MCDE).
+Welcome to the supplementary material for the paper:
+
+-  Edouard Fouché & Klemens Böhm. 2019. Monte Carlo Dependency Estimation. In 31st International Conference on Scientific and Statistical Database Management (SSDBM ’19), July 23–25, 2019, Santa Cruz, CA, USA. ACM, New York, NY, USA, 12 pages. https://doi.org/10.1145/3335783.3335795
+
+This repository contains the original implementation of MCDE/MWP and the
+information to reproduce the experiments in the paper. For this reason,
+it is partially frozen at the time of publication. To use the most recent
+and maintained implementation of MCDE/MWP, please visit this [repository](https://github.com/edouardfouche/MCDE).
 
 This repository is released under the AGPLv3 license. Please see the [LICENSE.md](LICENSE.md) file. 
 
@@ -189,7 +192,7 @@ Results are saved in the folder `experiments` as `.csv` files, along with logs.
 
 Evaluate the statistical power of MCDE/MWP and of the benchmark approaches against a panel of dependencies.
 ```
-sbt "run com.edouardfouche.experiments.Power"  # ~ 7 hours, 3Mb data
+sbt "run com.edouardfouche.experiments.Power"  # ~ 7 hours, 3MB data
 ```
 
 ### PowerM
@@ -197,7 +200,7 @@ sbt "run com.edouardfouche.experiments.Power"  # ~ 7 hours, 3Mb data
 Evaluate the influence of parameter *M* w.r.t. the statistical power of MCDE/MWP. 
 
 ```
-sbt "run com.edouardfouche.experiments.PowerM" # ~ 10 minutes, 1Mb data
+sbt "run com.edouardfouche.experiments.PowerM" # ~ 10 minutes, 1MB data
 ```
 
 ### PowerN
@@ -205,7 +208,7 @@ sbt "run com.edouardfouche.experiments.PowerM" # ~ 10 minutes, 1Mb data
 Evaluate the sensitivity of each approach w.r.t. *n*, the number data points. 
 
 ```
-sbt "run com.edouardfouche.experiments.PowerN" # ~ 2.5 hours, 4Mb data
+sbt "run com.edouardfouche.experiments.PowerN" # ~ 2.5 hours, 4MB data
 ```
 
 ### PowerDiscrete
@@ -213,7 +216,7 @@ sbt "run com.edouardfouche.experiments.PowerN" # ~ 2.5 hours, 4Mb data
 Evaluate the robustness of each approach against discrete data. 
 
 ```
-sbt "run com.edouardfouche.experiments.PowerDiscrete" # ~ 3 hours, 5Mb data
+sbt "run com.edouardfouche.experiments.PowerDiscrete" # ~ 3 hours, 5MB data
 ```
 
 ### ScalabilityN
@@ -221,7 +224,7 @@ sbt "run com.edouardfouche.experiments.PowerDiscrete" # ~ 3 hours, 5Mb data
 Evaluate the scalability of each approach w.r.t. *n*, the number data points. 
 
 ```
-sbt "run com.edouardfouche.experiments.ScalabilityN" # ~ 45 minutes, 5Mb data
+sbt "run com.edouardfouche.experiments.ScalabilityN" # ~ 45 minutes, 5MB data
 ```
 
 ### ScalabilityD
@@ -229,7 +232,7 @@ sbt "run com.edouardfouche.experiments.ScalabilityN" # ~ 45 minutes, 5Mb data
 Evaluate the scalability of each approach w.r.t. *d*, the number dimensions. 
 
 ```
-sbt "run com.edouardfouche.experiments.ScalabilityD" # ~ 2.5 hours, 2Mb data 
+sbt "run com.edouardfouche.experiments.ScalabilityD" # ~ 2.5 hours, 2MB data
 ```
 
 ## Visualize the results
@@ -248,8 +251,7 @@ seaborn                   0.8
 ## Contributing
 
 We welcome contributions to the repository and bug reports on GitHub.
-
-For questions and comments, please contact `edouard.fouche@kit.edu`
+For questions and comments, please contact `edouard.fouche@kit.edu`, or open an issue.
 
 ## Related Projects
 
@@ -266,4 +268,6 @@ This repository features code from other projects. We would like to acknowledge 
 
 - The [ELKI project](https://elki-project.github.io/) for the R*-Tree index structure, that we use to accelerate the nearest neighbors queries in `TC` and `II`. 
 
-- Hendrik Braun, for the implementation of `TC`, `II`, `MS`, as a part of his Bachelor's thesis at KIT. 
+- Hendrik Braun, for the implementation of `TC`, `II`, `MS`, as a part of his Bachelor's thesis at KIT.
+
+- This work was supported by the DFG Research Training Group 2153: ‘Energy Status Data – Informatics Methods for its Collection, Analysis and Exploitation’ and the German Federal Ministry of Education and Research (BMBF) via Software Campus (01IS17042).
