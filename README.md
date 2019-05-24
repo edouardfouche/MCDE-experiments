@@ -184,8 +184,8 @@ Computation time:    51.002643 ms (cpu), 1123.108306 ms (wall)
 ## Reproducing the experiments
 
 In this section, we explain how to reproduce the experiments from our paper. 
-The experiments creates about 20Mb of data and require about 16 hours 
-on a server with 20 cores at 2.2 Ghz, Java Open-JDK 8 and Scala 2.12.8.
+The experiments creates about 20MB of data and require about 16 hours
+on a server with 20 cores at 2.2 Ghz and 32GB RAM, using Java Open-JDK 8 and Scala 2.12.8.
 Results are saved in the folder `experiments` as `.csv` files, along with logs.
 
 ### Power
@@ -251,13 +251,14 @@ seaborn                   0.8
 ## Contributing
 
 We welcome contributions to the repository and bug reports on GitHub.
+
 For questions and comments, please contact `edouard.fouche@kit.edu`, or open an issue.
 
 ## Related Projects
 
-- We propose a standalone, deployment-ready version of MCDE in this [repository](https://github.com/edouardfouche/MCDE)
+- We propose a standalone, deployment-ready version of MCDE in this [repository](https://github.com/edouardfouche/MCDE).
 
-- The experiments use a data generator, from this [repository](https://github.com/edouardfouche/DataGenerator)
+- We developed a data generator for these experiments, which we released independently [here](https://github.com/edouardfouche/DataGenerator).
 
 
 ## Acknowledgements
@@ -266,7 +267,7 @@ This repository features code from other projects. We would like to acknowledge 
 
 - Hoang Vu Nguyen for providing the source for `HiCS`, `TC`, `II`, `MS`, `UDS`, `MAC`, `CMI` in the [code dump](http://eda.mmci.uni-saarland.de/uds/) for the paper `Nguyen, Hoang-Vu, Panagiotis Mandros, and Jilles Vreeken. "Universal dependency analysis." Proceedings of the 2016 SIAM International Conference on Data Mining. Society for Industrial and Applied Mathematics, 2016.`
 
-- The [ELKI project](https://elki-project.github.io/) for the R*-Tree index structure, that we use to accelerate the nearest neighbors queries in `TC` and `II`. 
+- The [ELKI project](https://elki-project.github.io/) for the R*-Tree index structure, that we use to accelerate the kNN queries in `TC` and `II`.
 
 - Hendrik Braun, for the implementation of `TC`, `II`, `MS`, as a part of his Bachelor's thesis at KIT.
 
