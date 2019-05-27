@@ -77,7 +77,7 @@ If not specified, the dependency is estimated on the full space.
 
 ## Examples
 
-We provide a sample of the data used for the experiments in `src/test/resources/data` for testing purposes.
+We provide a sample of the data used for the experiments in `src/test/resources/data` for testing.
 
 ### Running MCDE/MWP
 
@@ -184,7 +184,7 @@ Computation time:    51.002643 ms (cpu), 1123.108306 ms (wall)
 ## Reproducing the experiments
 
 In this section, we explain how to reproduce the experiments from our paper. 
-The experiments creates about 20MB of data and require about 16 hours
+The experiments create about 20MB of data and require about 16 hours
 on a server with 20 cores at 2.2 Ghz and 32GB RAM, using Java Open-JDK 8 and Scala 2.12.8.
 Results are saved in the folder `experiments` as `.csv` files, along with logs.
 
