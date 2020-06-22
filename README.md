@@ -12,7 +12,8 @@ Welcome to the supplementary material for the paper:
 This repository contains the original implementation of MCDE/MWP and the
 information to reproduce the experiments in the paper. For this reason,
 it is partially frozen at the time of publication. To use the most recent
-and maintained implementation of MCDE/MWP, please visit this [repository](https://github.com/edouardfouche/MCDE).
+and maintained implementation of MCDE/MWP, please visit this [repository](https://github.com/edouardfouche/MCDE). 
+See also the experiments from our [follow-up study](https://github.com/edouardfouche/MCDE-EXTENDED). 
 
 This repository is released under the AGPLv3 license. Please see the [LICENSE.md](LICENSE.md) file. 
 
@@ -257,6 +258,8 @@ For questions and comments, please contact `edouard.fouche@kit.edu`, or open an 
 ## Related Projects
 
 - We propose a standalone, deployment-ready version of MCDE in this [repository](https://github.com/edouardfouche/MCDE).
+
+- See also the experiments from our [follow-up study](https://github.com/edouardfouche/MCDE-EXTENDED). 
 
 - We developed a data generator for these experiments, which we released independently [here](https://github.com/edouardfouche/DataGenerator).
 
