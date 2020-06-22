@@ -19,13 +19,11 @@ package com.edouardfouche.experiments
 import breeze.stats.DescriptiveStats.percentile
 import breeze.stats.{mean, stddev}
 //import com.edouardfouche.generators_deprecated.{DataGenerator, GeneratorFactory, Independent}
-import io.github.edouardfouche.generators.{DataGenerator, GeneratorFactory, Independent}
-
 import com.edouardfouche.preprocess.DataRef
 import com.edouardfouche.stats.external._
-import com.edouardfouche.stats.mcde.McdeStats
-import com.edouardfouche.stats.mcde.{KS, MWP, MWPr, MWPu}
+import com.edouardfouche.stats.mcde.{MWP, McdeStats}
 import com.edouardfouche.utils.StopWatch
+import io.github.edouardfouche.generators.{DataGenerator, Independent}
 
 
 /**
@@ -39,7 +37,7 @@ object Power extends Experiment {
   val data: Vector[DataRef] = Vector()
 
   val N_range: Vector[Int] = Vector(1000) // number of data points for each data set
-  val dims: Vector[Int] = Vector(2, 3, 5)
+  val dims: Vector[Int] = Vector(2, 3, 5, 10, 20)
   val noiseLevels = 30
   val generators: Vector[(Int,Double,String,Int) => DataGenerator] = selected_generators
 
